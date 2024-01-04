@@ -1,6 +1,7 @@
 import axios from "axios";
-// const URL = "https://mindful-server.onrender.com";
-const URL = "http://localhost:8080";
+
+// const URL = "http://localhost:8080";
+const URL = "https://settlin-task.onrender.com";
 const addExpenses = async (data) => {
   return axios
     .post(`${URL}/api/v1/expense/add`, data)

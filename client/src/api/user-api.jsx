@@ -1,5 +1,5 @@
 import axios from "axios";
-const URL = "http://localhost:8080";
+const URL = "https://settlin-task.onrender.com";
 const registerUserApi = async (data) => {
   console.log(data);
   const config = {

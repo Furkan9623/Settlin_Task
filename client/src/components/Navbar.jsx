@@ -16,9 +16,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { loginAuth, setLoginAuth } = useContext(loginContext);
   const { name, imageUrl } = JSON.parse(localStorage.getItem("User")) || "";
-  const URL = "http://localhost:8080";
+  // const URL = "http://localhost:8080";
+  const URL = "https://settlin-task.onrender.com";
   const logoutUser = () => {
-    localStorage.clear();
+    localStorage.removeItem("User");
+    localStorage.removeItem("loginAuth");
     setLoginAuth(false);
   };
   return (
