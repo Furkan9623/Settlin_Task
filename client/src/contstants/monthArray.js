@@ -1,0 +1,15 @@
+export const monthsData = [
+  { id: "sdjfdsf", month: "All", value: "" },
+  { id: "1", month: "January", value: "1" },
+  { id: "2", month: "February", value: "2" },
+  { id: "3", month: "March", value: "3" },
+  { id: "4", month: "April", value: "4" },
+  { id: "5", month: "May", value: "5" },
+  { id: "6", month: "June", value: "6" },
+  { id: "7", month: "July", value: "7" },
+  { id: "8", month: "August", value: "8" },
+  { id: "9", month: "September", value: "9" },
+  { id: "10", month: "October", value: "10" },
+  { id: "11", month: "November", value: "11" },
+  { id: "12", month: "December", value: "12" },
+];

@@ -6,10 +6,12 @@ import {
   Typography,
   Avatar,
   CardMedia,
+  Fab,
 } from "@mui/material";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginContext } from "../context/MyContext";
+import LogoutIcon from "@mui/icons-material/Logout";
 const Navbar = () => {
   const navigate = useNavigate();
   const { loginAuth, setLoginAuth } = useContext(loginContext);
@@ -45,27 +47,14 @@ const Navbar = () => {
                 <Avatar className="uppercase">{name[0]}</Avatar>
               )}
 
-              <button
-                type="button"
+              <Fab
+                size="small"
+                color="error"
+                aria-label="add"
                 onClick={logoutUser}
-                className="text-white bg-red-700 focus:ring-4 focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-700"
               >
-                <svg
-                  className="w-4 h-4"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M1 5h12m0 0L9 1m4 4L9 9"
-                  />
-                </svg>
-              </button>
+                <LogoutIcon fontSize="small" />
+              </Fab>
             </Box>
           ) : (
             <Button

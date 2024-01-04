@@ -9,6 +9,7 @@ import {
   TextField,
   Button,
   Modal,
+  Typography,
 } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -22,11 +23,22 @@ import { toast } from "react-toastify";
 import ModelComponents from "../components/ModelComponents";
 import TableComp from "../components/TableComp";
 import { getAllEntries } from "../api/expenses-api";
+import { Pagination } from "../components/Pagination";
+import { monthsData } from "../contstants/monthArray";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [entries, setEntries] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState("");
   const { loading, setLoading } = useContext(loadingContext);
+  const budget = localStorage.getItem("TotalBudget") || 0;
+  const [totalBudget, setTotalBudget] = useState(budget);
+  const [budgetInput, setBudgetInput] = useState("");
+  const [showPerPage, setShowPerPage] = useState(4);
+  const [pagination, setPagination] = useState({
+    start: 0,
+    end: showPerPage,
+  });
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -48,30 +60,87 @@ const Home = () => {
   useEffect(() => {
     fetchAllEntries();
   }, []);
+  // filter by date
+  let filterData = [...entries];
 
+  filterData = filterData.filter((entry) => {
+    if (selectedMonth === "") return filterData;
+    const entryMonth = new Date(entry.date).getMonth() + 1; // Get the month (1-12)
+    return entryMonth === parseInt(selectedMonth);
+  });
+
+  let totalExpenses = filterData.reduce((acc, currItem) => {
+    return acc + parseInt(currItem.amount);
+  }, 0);
+
+  useEffect(() => {
+    localStorage.setItem("TotalBudget", totalBudget);
+  }, [totalBudget]);
+  const budgetFormSubmit = (e) => {
+    e.preventDefault();
+    if (!budgetInput)
+      return toast.error("Please add amount", { theme: "colored" });
+    else if (isNaN(budgetInput))
+      return toast.error("Please Provide valid amount numerical values", {
+        theme: "colored",
+      });
+    setTotalBudget(budgetInput);
+    setBudgetInput("");
+  };
+
+  const onPagination = (startValue, endValue) => {
+    console.log(startValue, endValue);
+    setPagination({ start: startValue, end: endValue });
+  };
   return (
     <>
       <Box style={{ width: "80%" }} className="mt-36 mx-auto">
         <Box className="flex gap-3 justify-between items-center">
-          <form className="flex gap-5">
-            <TextField type="text" size="small" label="Add Monthly budget" />
-            <Button variant="contained" color="success" size="small">
+          <form className="flex gap-5" onSubmit={budgetFormSubmit}>
+            <TextField
+              type="text"
+              size="small"
+              value={budgetInput}
+              label="Add Monthly budget"
+              onChange={(e) => setBudgetInput(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              type="submit"
+              color="success"
+              size="small"
+            >
               ADD MONEY
             </Button>
           </form>
-
+          <Box className=" h-24 text-left w-96 gap-3 flex flex-col justify-center items-center shadow-xl">
+            <Typography>Total Budget : ₹ {totalBudget}</Typography>
+            <Typography>Total Monthly Expenses : ₹ {totalExpenses}</Typography>
+          </Box>
           <Box className="flex gap-8">
             <FormControl size="small" className="w-72">
-              <InputLabel id="city">Select Categories.....</InputLabel>
+              <InputLabel id="month">Select Months.....</InputLabel>
               <Select
                 sx={{ textAlign: "left" }}
                 name="city"
-                label="Select Categories....."
-                // value={filter}
-                // onChange={handleFilter}
+                label="Select Months....."
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px", // Adjust if needed to match the Select maxHeight
+                    },
+                  },
+                }}
               >
-                <MenuItem value="food">Food</MenuItem>
-                <MenuItem value="transp">Transportation</MenuItem>
+                {monthsData?.map((elem) => {
+                  return (
+                    <MenuItem key={elem.id} value={elem.value}>
+                      {elem.month}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
             <Button variant="contained" color="secondary" onClick={handleOpen}>
@@ -79,13 +148,7 @@ const Home = () => {
             </Button>
           </Box>
         </Box>
-        <TableContainer
-          sx={{
-            textAlign: "center",
-            boxShadow: "0 0 3px grey",
-            mt: "3rem",
-          }}
-        >
+        <TableContainer className="border shadow-2xl p-6 pb-16 text-center mt-5">
           <Table sx={{ textAlign: "center" }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -105,15 +168,17 @@ const Home = () => {
             <TableBody>
               {loading ? (
                 <Spinner />
-              ) : entries && entries.length > 0 ? (
+              ) : filterData && filterData.length > 0 ? (
                 <>
-                  {entries.map((elem) => (
-                    <TableComp
-                      key={elem._id}
-                      elem={elem}
-                      fetchAllEntries={fetchAllEntries}
-                    />
-                  ))}
+                  {filterData
+                    .slice(pagination.start, pagination.end)
+                    .map((elem) => (
+                      <TableComp
+                        key={elem._id}
+                        elem={elem}
+                        fetchAllEntries={fetchAllEntries}
+                      />
+                    ))}
                 </>
               ) : (
                 <img
@@ -123,6 +188,13 @@ const Home = () => {
               )}
             </TableBody>
           </Table>
+          {filterData?.length > 4 && !loading && (
+            <Pagination
+              showperPage={showPerPage}
+              onPagination={onPagination}
+              total={entries.length}
+            />
+          )}
         </TableContainer>
       </Box>
       {isOpen && (

@@ -51,7 +51,7 @@ const TableComp = ({ elem, fetchAllEntries }) => {
               aria-label="edit"
               onClick={handleChange}
             >
-              <RemoveRedEyeIcon />
+              <RemoveRedEyeIcon fontSize="small" />
             </Fab>
             <Fab
               size="small"
@@ -59,7 +59,7 @@ const TableComp = ({ elem, fetchAllEntries }) => {
               aria-label="add"
               onClick={deleteEntry}
             >
-              <DeleteIcon />
+              <DeleteIcon fontSize="small" />
             </Fab>
           </Box>
         </TableCell>
